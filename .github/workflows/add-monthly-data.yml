@@ -1,15 +1,14 @@
 name: UpdateMonthData
 
-# Crone job on every 6. of the month
-# on:
-#   schedule:
-#     - cron: '0 0 6 * *'
-
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   # push:
   #   branches: [main]
+
+  # Crone job on every 6th of the month at 4am
+  schedule:
+    - cron: 0 4 6 * *
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
