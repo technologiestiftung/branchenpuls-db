@@ -64,26 +64,26 @@ request(dataLink, { json: true }, (err, res, body) => {
   if (!res.body) {
     console.warn("no res.body");
   }
-  fs.writeFile(
-    path.join(dirName, "/tempData/monthData.csv"),
-    res.body,
-    { encoding: "utf8" },
-    (err) => {
-      console.log("Data downloaded !");
-      readData(month, year);
-    }
-  );
+  //   fs.writeFile(
+  //     path.join(dirName, "/tempData/monthData.csv"),
+  //     res.body,
+  //     { encoding: "utf8" },
+  //     (err) => {
+  console.log("Data downloaded !");
+  readData(res.body, month, year);
+  //     }
+  //   );
 });
 
-function readData(month, year) {
+function readData(data, month, year) {
   console.log("reading in data...");
-  const fileData = fs.readFileSync(
-    path.join(dirName, "/tempData/monthData.csv"),
-    "utf-8"
-  );
+  //   const fileData = fs.readFileSync(
+  //     path.join(dirName, "/tempData/monthData.csv"),
+  //     "utf-8"
+  //   );
   let parsedData = [];
 
-  Papa.parse(fileData, {
+  Papa.parse(data, {
     header: true,
     dynamicTyping: true, // Enable automatic type conversion
     step: function (result) {
