@@ -8,49 +8,17 @@
 
 # IHK - DB Setup & Update
 
-To set up the DB, you have to run following script from your prefered client:
+## Setup
+
+To set up the DB, you have to run following script from your prefered database client. This will set up all the tables.
 
 ```plain
 queries/setupTables.sql
 ```
 
-## TODO (after you generated the repo)
+## Update
 
-- [ ] Do you want to honor all kinds of contributions? Use [all-contributors](https://allcontributors.org/)
-
-```bash
-npx all-contributors-cli check
-npx all-contributors-cli add ff6347 doc
-```
-
-You can use it on GitHub just by commenting on PRs and issues:
-
-```plain
-@all-contributors please add @ff6347 for infrastructure, tests and code
-```
-
-- [ ] Add your project description
-- [ ] Get fancy shields at https://shields.io
-
-## Prerequisites
-
-tbd...
-
-## Installation
-
-tbd...
-
-## Usage or Deployment
-
-tbd...
-
-## Development
-
-tbd...
-
-## Tests
-
-tbd...
+In the _scripts_ folder there is a script called _addMonthlyData.js_. The script is executed by Github Actions and should run every month. It downloads the most recent data from the IHK repo and writes it to the DB.
 
 ## Contributing
 
