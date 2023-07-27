@@ -219,12 +219,12 @@ function uploadToDB(data, month, year) {
   // Main async function
   async function main() {
     try {
-      //   console.log(`Starting processing of ${data.length} rows...`);
-      //   // // Create an array of promises for all rows
-      //   let promises = data.map((row, i) => handleRow(row, i));
-      //   // Process all rows concurrently
-      //   await Promise.all(promises);
-      //   console.log("Finished processing all rows.");
+      console.log(`Starting processing of ${data.length} rows...`);
+      // // Create an array of promises for all rows
+      let promises = data.map((row, i) => handleRow(row, i));
+      // Process all rows concurrently
+      await Promise.all(promises);
+      console.log("Finished processing all rows.");
 
       // finally create a table for the newly added month
       console.log("creating moth table");
