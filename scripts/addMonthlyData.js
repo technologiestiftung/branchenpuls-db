@@ -57,23 +57,23 @@ const lookupEmployees = {
 };
 
 console.log("downloading data ...");
-// request(dataLink, { json: true }, (err, res, body) => {
-//   if (err) {
-//     console.warn("err:", err);
-//   }
-//   if (!res.body) {
-//     console.warn("no res.body");
-//   }
-//   fs.writeFile(
-//     path.join(dirName, "/tempData/monthData.csv"),
-//     res.body,
-//     { encoding: "utf8" },
-//     (err) => {
-console.log("Data downloaded !");
-readData(month, year);
-//     }
-//   );
-// });
+request(dataLink, { json: true }, (err, res, body) => {
+  if (err) {
+    console.warn("err:", err);
+  }
+  if (!res.body) {
+    console.warn("no res.body");
+  }
+  fs.writeFile(
+    path.join(dirName, "/tempData/monthData.csv"),
+    res.body,
+    { encoding: "utf8" },
+    (err) => {
+      console.log("Data downloaded !");
+      readData(month, year);
+    }
+  );
+});
 
 function readData(month, year) {
   console.log("reading in data...");
