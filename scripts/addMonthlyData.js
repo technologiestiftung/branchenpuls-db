@@ -1,12 +1,8 @@
-// require("dotenv").config();
-// require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
-
 const request = require("request");
 const Papa = require("papaparse");
 const pgp = require("pg-promise")();
 const fs = require("fs");
 const path = require("path");
-const dirName = __dirname;
 const { getMonthTableQuery } = require("./lib/getMonthTableQuery");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
@@ -65,7 +61,7 @@ request(dataLink, { json: true }, (err, res, body) => {
     console.warn("no res.body");
   }
   //   fs.writeFile(
-  //     path.join(dirName, "/tempData/monthData.csv"),
+  //     path.join(__dirname, "/tempData/monthData.csv"),
   //     res.body,
   //     { encoding: "utf8" },
   //     (err) => {
@@ -78,7 +74,7 @@ request(dataLink, { json: true }, (err, res, body) => {
 function readData(data, month, year) {
   console.log("reading in data...");
   //   const fileData = fs.readFileSync(
-  //     path.join(dirName, "/tempData/monthData.csv"),
+  //     path.join(__dirname, "/tempData/monthData.csv"),
   //     "utf-8"
   //   );
   let parsedData = [];
