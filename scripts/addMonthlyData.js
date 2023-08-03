@@ -6,31 +6,19 @@ const path = require("path");
 const { getMonthTableQuery } = require("./lib/getMonthTableQuery");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
+let isLocal = true;
+let db;
+let wasError = false;
 const date = new Date();
-const year = date.getFullYear();
+let year = date.getFullYear();
 let month = date.getMonth() + 1;
 month = month.toString().length === 1 ? `0${month}` : `${month}`;
+if (isLocal) {
+  // change date here
+  month = "07";
+  year = "2023";
+}
 const dataLink = `https://media.githubusercontent.com/media/IHKBerlin/IHKBerlin_Gewerbedaten/master/archivedData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`;
-
-// Initialize the connection to your PostgreSQL database
-
-// local settings
-// const db = pgp({
-//   host: "localhost",
-//   port: 5433,
-//   database: "ihk_db",
-//   user: "postgres",
-//   password: "your_password",
-// });
-
-const db = pgp({
-  host: process.env.SUPABASE_HOST,
-  port: Number(process.env.SUPABASE_PORT),
-  database: process.env.SUPABASE_DATABASE,
-  user: process.env.SUPABASE_USER,
-  password: process.env.SUPABASE_PASSWORD,
-});
-
 const lookupEmployees = {
   0: 0,
   "0 Beschäftigte": 0,
@@ -49,34 +37,70 @@ const lookupEmployees = {
   "7500 - 9999 Beschäftigte": 13,
   "10000 und mehr Beschäftigte": 14,
   unbekannt: 15,
-  // 99 = 'falsche Angabe'
+  NULL: 15,
+  null: 15,
 };
 
-console.log("downloading data ...");
-request(dataLink, { json: true }, (err, res, body) => {
-  if (err) {
-    console.warn("err:", err);
-  }
-  if (!res.body) {
-    console.warn("no res.body");
-  }
-  //   fs.writeFile(
-  //     path.join(__dirname, "/tempData/monthData.csv"),
-  //     res.body,
-  //     { encoding: "utf8" },
-  //     (err) => {
-  console.log("Data downloaded !");
-  readData(res.body, month, year);
-  //     }
-  //   );
-});
+function getMessage(i, startTime) {
+  const nowTime = new Date();
+  const timePasted = (nowTime - startTime) / 1000;
+  const message = `Added row ${i} - Time past: ${timePasted}sec (${(
+    timePasted.toFixed() / 60
+  ).toFixed()} min)`;
+
+  return message;
+}
+// Initialize the connection to your PostgreSQL database
+if (isLocal) {
+  db = pgp({
+    host: "localhost",
+    port: 5433,
+    database: "ihk_db_new_two",
+    user: "postgres",
+    password: "your_password",
+  });
+} else {
+  db = pgp({
+    host: process.env.SUPABASE_HOST,
+    port: Number(process.env.SUPABASE_PORT),
+    database: process.env.SUPABASE_DATABASE,
+    user: process.env.SUPABASE_USER,
+    password: process.env.SUPABASE_PASSWORD,
+  });
+}
+
+if (isLocal) {
+  const data = fs.readFileSync(
+    path.join(
+      __dirname,
+      `/tempData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`
+    ),
+    "utf-8"
+  );
+  readData(data, month, year);
+} else {
+  console.log("downloading data ...");
+  request(dataLink, { json: true }, (err, res, body) => {
+    if (err) {
+      console.warn("err:", err);
+    }
+    if (!res.body) {
+      console.warn("no res.body");
+    }
+    console.log("Data downloaded !");
+    readData(res.body, month, year);
+  });
+}
 
 function readData(data, month, year) {
   console.log("reading in data...");
-  //   const fileData = fs.readFileSync(
-  //     path.join(__dirname, "/tempData/monthData.csv"),
-  //     "utf-8"
-  //   );
+  data = fs.readFileSync(
+    path.join(
+      __dirname,
+      `/tempData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`
+    ),
+    "utf-8"
+  );
   let parsedData = [];
 
   Papa.parse(data, {
@@ -109,7 +133,7 @@ function readData(data, month, year) {
           });
         }
         if (value === undefined || value === "NULL") {
-          data[key] = null;
+          data[key] = "NULL";
         }
         if (Number(data[key]) && data[key] !== null) {
           data[key] = Number(data[key]);
@@ -125,6 +149,11 @@ function readData(data, month, year) {
         data.latitude = Number(data.latitude.toFixed(5));
         data.longitude = Number(data.longitude.toFixed(5));
         parsedData.push(data);
+      } else {
+        console.log(
+          "data not added becaue of missing coordinates or id: ",
+          data?.opendata_id
+        );
       }
     },
     complete: function () {
@@ -136,26 +165,26 @@ function readData(data, month, year) {
 
 function uploadToDB(data, month, year) {
   console.log("uploading data ... ");
+
   let startTime = new Date();
   // Function to handle each row
   async function handleRow(row, i) {
-    try {
-      //   get date from file name
-      const dataDate = `${year}-${month}-01`;
+    //   get date from file name
+    const dataDate = `${year}-${month}-01`;
 
-      const businessType =
-        row.business_type === "Kleingewerbetreibender"
-          ? 0
-          : row.business_type === "im Handelsregister eingetragen"
-          ? 1
-          : 2;
+    const businessType =
+      row.business_type === "Kleingewerbetreibender"
+        ? 0
+        : row.business_type === "im Handelsregister eingetragen"
+        ? 1
+        : 2;
 
-      const employeesRange =
-        lookupEmployees[row.employees_range] !== undefined
-          ? lookupEmployees[row.employees_range]
-          : 99;
+    const employeesRange =
+      lookupEmployees[row.employees_range] !== undefined
+        ? lookupEmployees[row.employees_range]
+        : 15;
 
-      const query = `
+    let query = `
 			-- add a business 
 			INSERT INTO business (opendata_id,business_type,created_on)
 			VALUES (${row.opendata_id},'${businessType}','${dataDate}')
@@ -174,7 +203,7 @@ function uploadToDB(data, month, year) {
 
 			-- the tables saves the brnach for each business. If the brnach type chnages, a new enry is added with the same opendata_id
 			INSERT INTO branch (opendata_id, created_on, ihk_branch_id)
-			SELECT '${row.opendata_id}', '${dataDate}','${row.ihk_branch_id}'
+			SELECT ${row.opendata_id}, '${dataDate}',${row.ihk_branch_id}
 			WHERE ${row.ihk_branch_id} NOT IN (SELECT ihk_branch_id FROM branch WHERE opendata_id = '${row.opendata_id}');
 
 			-- add location data about a business if the lat lng do not already exist for that business
@@ -197,18 +226,18 @@ function uploadToDB(data, month, year) {
 			branch_top_level_desc = COALESCE(EXCLUDED.branch_top_level_desc, branch_names.branch_top_level_desc);
         	`;
 
+    try {
       await db.none(query);
-      const nowTime = new Date();
-      const timePasted = (nowTime - startTime) / 1000;
-      console.log(
-        `Added row ${i}`,
-        `Time past: `,
-        timePasted + " sec",
-        " (",
-        (timePasted.toFixed() / 60).toFixed() + " min)"
-      );
+      const message = getMessage(i, startTime);
+      process.stdout.write(!wasError ? "\r" + message : message);
+      wasError = false;
     } catch (err) {
-      console.error(`Error executing query for row ${i}`, err.stack);
+      console.error(
+        `Error executing query for id ${row.opendata_id}`,
+        err.stack,
+        query
+      );
+      wasError = true;
     }
   }
 
@@ -223,7 +252,7 @@ function uploadToDB(data, month, year) {
       console.log("Finished processing all rows.");
 
       // finally create a table for the newly added month
-      console.log("creating moth table");
+      console.log("creating month table");
       const tableName = `state_${month}_${year}`;
       const fullDate = `'${year}-${month}-01'`;
       const monthTableQuery = getMonthTableQuery(tableName, fullDate);

@@ -107,3 +107,15 @@ VALUES
 
 
 
+
+
+-- DELETE FROM business;
+-- DELETE FROM employees;
+-- DELETE FROM branch;
+-- DELETE FROM location;
+-- DELETE FROM branch_names;
+-- DELETE FROM state_03_2023;
+-- DELETE FROM state_04_2023;
+-- DELETE FROM state_05_2023;
+-- DELETE FROM state_06_2023;
+-- DELETE FROM state_07_2023;

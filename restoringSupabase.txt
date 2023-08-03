@@ -1,0 +1,19 @@
+Notes on how to fully resore Supabase 
+
+set up db locally
+set up all tables and function
+download all data to tempData folder
+run the script for each month starting with the first month and then in ORDER
+connect to Supabase and delete all content from table (lookup tables can be ignored if nothing changed)
+Delete like so: DELETE FROM business;
+Make a Backup of you local DB using PG Admin 4: 
+    - Format: Custom
+    - Type of Object: Only Data
+    - Do not save: Owner (and all others)
+Connect to Supabase with PG Admin and RESTORE with same setting as Backup
+    - The lookup tables will fail because if not deleted before
+    - You might get an error:
+        pg_restore: error: COPY failed for table "branch": ERROR: insert or update on table "branch" violates foreign key constraint "fk_branch_business"
+        DETAIL: Key (opendata_id)=(943012271374) is not present in table "business".
+
+        This is because branch needs to be created after business. Make a separate Backup of branch and upload it again.
