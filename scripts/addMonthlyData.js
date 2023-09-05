@@ -1,6 +1,8 @@
 const request = require("request");
 const Papa = require("papaparse");
 const pgp = require("pg-promise")();
+const pLimit = require("p-limit");
+const limit = pLimit(50); // Limit to processing 5 rows concurrently
 const fs = require("fs");
 const path = require("path");
 const { getMonthTableQuery } = require("./lib/getMonthTableQuery");
@@ -252,7 +254,11 @@ function uploadToDB(data, month, year) {
     try {
       console.log(`Starting processing of ${data.length} rows...`);
       // // Create an array of promises for all rows
-      let promises = data.map((row, i) => handleRow(row, i));
+
+      const promises = data.map((row, i) => {
+        return limit(() => handleRow(row, i));
+      });
+
       // Process all rows concurrently
       await Promise.all(promises);
       console.log("Finished processing all rows.");
