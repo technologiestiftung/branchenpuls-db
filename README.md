@@ -8,9 +8,13 @@
 
 # IHK - DB Setup & Update
 
+[Data](https://github.com/IHKBerlin/IHKBerlin_Gewerbedaten/tree/master/archivedData)
+
 ## Setup
 
-To set up the DB, you have to run following scripts from your prefered database client. This will set up all the tables.
+Create a Postgres DB with a name (default: ihk-db) of your choice.
+
+Then run the following SQL queries from your prefered database client. This will set up all the tables and functions.
 
 ```plain
 queries/setupTables.sql
@@ -20,7 +24,19 @@ queries/setupTables.sql
 queries/setupFunctions.sql
 ```
 
-## Update
+## Upload data to your local DB
+
+In the _scripts_ folder there is a script called _addMonthlyData.js_. You should change the connection details here if you want to write the ihk data to your local DB.
+
+Then download the IHK data from the IHK repo where the files name are called something like: "IHKBerlin_Gewerbedaten_07-2023". Save the file in the folder "scripts/tempData".
+
+To import the data run the following comand. You will need to adjust the 2 arguments (month and year) according to your date.
+
+```code
+node addMonthlyData.js 07 2023
+```
+
+## Auto-Update
 
 In the _scripts_ folder there is a script called _addMonthlyData.js_. The script is executed by Github Actions and should run every month. It downloads the most recent data from the IHK repo and writes it to the DB.
 

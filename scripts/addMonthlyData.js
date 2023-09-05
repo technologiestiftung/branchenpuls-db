@@ -6,18 +6,23 @@ const path = require("path");
 const { getMonthTableQuery } = require("./lib/getMonthTableQuery");
 require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
-let isLocal = true;
 let db;
 let wasError = false;
 const date = new Date();
 let year = date.getFullYear();
 let month = date.getMonth() + 1;
 month = month.toString().length === 1 ? `0${month}` : `${month}`;
+
+const clMonth = process?.argv[2];
+const clYear = process?.argv[3];
+let isLocal = clMonth && clYear ? true : false;
+
 if (isLocal) {
   // change date here
-  month = "07";
-  year = "2023";
+  month = clMonth; // 07
+  year = clYear; // 2023
 }
+
 const dataLink = `https://media.githubusercontent.com/media/IHKBerlin/IHKBerlin_Gewerbedaten/master/archivedData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`;
 const lookupEmployees = {
   0: 0,
@@ -51,11 +56,12 @@ function getMessage(i, startTime) {
   return message;
 }
 // Initialize the connection to your PostgreSQL database
+// Change the connection details here
 if (isLocal) {
   db = pgp({
     host: "localhost",
     port: 5433,
-    database: "ihk_db_new_two",
+    database: "ihk_db",
     user: "postgres",
     password: "your_password",
   });
@@ -196,12 +202,12 @@ function uploadToDB(data, month, year) {
 			SET updated_on = '${dataDate}', business_age = ${row.business_age}
 			WHERE opendata_id = '${row.opendata_id}';
 
-			-- the table save the employees range. If the employees_range chnages (more or less employees), a new entry is added
+			-- the table save the employees range. If the employees_range changes (more or less employees), a new entry is added
 			INSERT INTO employees (opendata_id, created_on, employees_range)
 			SELECT '${row.opendata_id}', '${dataDate}','${employeesRange}'
 			WHERE '${employeesRange}' NOT IN (SELECT employees_range FROM employees WHERE opendata_id = '${row.opendata_id}');
 
-			-- the tables saves the brnach for each business. If the brnach type chnages, a new enry is added with the same opendata_id
+			-- the tables saves the branch for each business. If the branch type changes, a new enry is added with the same opendata_id
 			INSERT INTO branch (opendata_id, created_on, ihk_branch_id)
 			SELECT ${row.opendata_id}, '${dataDate}',${row.ihk_branch_id}
 			WHERE ${row.ihk_branch_id} NOT IN (SELECT ihk_branch_id FROM branch WHERE opendata_id = '${row.opendata_id}');
