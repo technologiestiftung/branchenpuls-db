@@ -1,8 +1,4 @@
-"use strict";
-
-module.exports = { getMonthTableQuery };
-
-function getMonthTableQuery(tableName, fullDate) {
+export function getMonthTableQuery(tableName, fullDate) {
   const query = `
     
     DROP TABLE IF EXISTS ${tableName};

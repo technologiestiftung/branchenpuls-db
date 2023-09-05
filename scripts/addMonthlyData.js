@@ -1,12 +1,34 @@
-const request = require("request");
-const Papa = require("papaparse");
-const pgp = require("pg-promise")();
-const pLimit = require("p-limit");
-const limit = pLimit(50); // Limit to processing 5 rows concurrently
-const fs = require("fs");
-const path = require("path");
-const { getMonthTableQuery } = require("./lib/getMonthTableQuery");
-require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
+// const request = require("request");
+// const Papa = require("papaparse");
+// const pgp = require("pg-promise")();
+// const pLimit = require("p-limit");
+// const limit = pLimit(50); // Limit to processing 5 rows concurrently
+// const fs = require("fs");
+// const path = require("path");
+// const { getMonthTableQuery } = require("./lib/getMonthTableQuery");
+// require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
+
+import request from "request";
+import Papa from "papaparse";
+import pgPromise from "pg-promise";
+import pLimit from "p-limit";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url"; // Import the fileURLToPath function
+import { getMonthTableQuery } from "./lib/getMonthTableQuery.js";
+import dotenv from "dotenv";
+
+// Convert the current ES module's URL to a file path
+const currentFilePath = fileURLToPath(import.meta.url);
+
+// Use the path.dirname function to get the directory name
+const currentDir = path.dirname(currentFilePath);
+
+// Set the path for dotenv.config()
+dotenv.config({ path: path.join(currentDir, "..", ".env") });
+
+const pgp = pgPromise();
+const limit = pLimit(50); // Limit to processing 50 rows concurrently
 
 let db;
 let wasError = false;

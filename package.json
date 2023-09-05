@@ -8,6 +8,7 @@
   },
   "author": "",
   "license": "ISC",
+  "type": "module",
   "dependencies": {
     "dotenv": "^16.3.1",
     "p-limit": "^4.0.0",
