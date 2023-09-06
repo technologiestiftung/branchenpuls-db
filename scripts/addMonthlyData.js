@@ -102,7 +102,7 @@ if (isLocal) {
 if (isLocal) {
   const data = fs.readFileSync(
     path.join(
-      __dirname,
+      currentDir,
       `/tempData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`
     ),
     "utf-8"
@@ -124,13 +124,6 @@ if (isLocal) {
 
 function readData(data, month, year) {
   console.log("reading in data...");
-  // data = fs.readFileSync(
-  //   path.join(
-  //     __dirname,
-  //     `/tempData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`
-  //   ),
-  //   "utf-8"
-  // );
   let parsedData = [];
 
   Papa.parse(data, {

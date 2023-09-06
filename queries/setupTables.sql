@@ -109,7 +109,7 @@ VALUES
 
 
 
--- DELETE FROM business;
+
 -- DELETE FROM employees;
 -- DELETE FROM branch;
 -- DELETE FROM location;
@@ -119,3 +119,7 @@ VALUES
 -- DELETE FROM state_05_2023;
 -- DELETE FROM state_06_2023;
 -- DELETE FROM state_07_2023;
+-- DELETE FROM state_08_2023;
+-- DELETE FROM state_09_2023;
+-- DELETE FROM business;
+
