@@ -48,6 +48,8 @@ To import the data run the following command. You will need to adjust the 2 argu
 node addMonthlyData.js 07 2023
 ```
 
+Make sure to import the data chronologically.
+
 ## Auto-Update
 
 The repo contains a Github Actions script (`.github/workflows/add-monthly-data-yml`) which runs every month. It downloads the most recent data from the IHK repo and writes it to a Supabase DB.
