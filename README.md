@@ -6,19 +6,25 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-# IHK - DB Setup & Update
+# BranchenPuls - database setup & update
 
-[Data](https://github.com/IHKBerlin/IHKBerlin_Gewerbedaten/tree/master/archivedData)
+**This application is a prototype. It may contain errors and small bugs. If you notice something you can report an issue. Thank you!**
+
+The Repo contains everything you will need to setup a PostgreSQL database for [BranchenPuls](https://github.com/technologiestiftung/branchenpuls) and import the raw [data](https://github.com/IHKBerlin/IHKBerlin_Gewerbedaten/tree/master/archivedData) to a DB.
 
 ## Setup
 
-Create a Postgres DB with a name (default: ihk-db) of your choice.
+Create a PostgreSQL database (e.g. by using a client like pgAdmin) called `ihk-db`.
 
-Then run the following SQL queries from your prefered database client. This will set up all the tables and functions.
+Then run the following SQL queries from your preferred database client. This will set up all the tables and functions.
+
+Set up tables:
 
 ```plain
 queries/setupTables.sql
 ```
+
+Set up functions:
 
 ```plain
 queries/setupFunctions.sql
@@ -26,11 +32,17 @@ queries/setupFunctions.sql
 
 ## Upload data to your local DB
 
-In the _scripts_ folder there is a script called _addMonthlyData.js_. You should change the connection details here if you want to write the ihk data to your local DB.
+In the _scripts_ folder, you will find a script called _addMonthlyData.js_ which helps you to import the raw data for a single month. You have to change the connection details in the code if you want to write the data to your local DB.
 
-Then download the IHK data from the IHK repo where the files name are called something like: "IHKBerlin_Gewerbedaten_07-2023". Save the file in the folder "scripts/tempData".
+Install the necessary libraries (you will need npm to be installed).
 
-To import the data run the following comand. You will need to adjust the 2 arguments (month and year) according to your date.
+```code
+npm install
+```
+
+Then download the [IHK data](https://github.com/IHKBerlin/IHKBerlin_Gewerbedaten/tree/master/archivedData) from the IHK repo where the files are named something like: "IHKBerlin_Gewerbedaten_07-2023". Save the file in the folder "scripts/tempData".
+
+To import the data run the following command. You will need to adjust the 2 arguments (month and year) according to your date.
 
 ```code
 node addMonthlyData.js 07 2023
@@ -38,7 +50,9 @@ node addMonthlyData.js 07 2023
 
 ## Auto-Update
 
-In the _scripts_ folder there is a script called _addMonthlyData.js_. The script is executed by Github Actions and should run every month. It downloads the most recent data from the IHK repo and writes it to the DB.
+The repo contains a Github Actions script (`.github/workflows/add-monthly-data-yml`) which runs every month. It downloads the most recent data from the IHK repo and writes it to a Supabase DB.
+
+Connection details for Supabase need to be provided in Github. The connection details are suggested in `.env.example`. If you do not know how to obtain the necessary details, please ask a repository maintainer for access. You can also use other basemaps by providing your own style file.
 
 ## Contributing
 
