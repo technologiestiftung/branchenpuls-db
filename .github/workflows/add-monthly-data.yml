@@ -6,9 +6,9 @@ on:
   # push:
   #   branches: [main]
 
-  # Crone job on every 6th of the month at 4am
+  # Crone job on every 14th of the month at 4am
   schedule:
-    - cron: 0 4 6 * *
+    - cron: 0 4 14 * *
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

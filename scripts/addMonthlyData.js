@@ -48,9 +48,9 @@ if (isLocal) {
   month = clMonth; // 07
   year = clYear; // 2023
 }
-const dataLink =
-  "https://media.githubusercontent.com/media/IHKBerlin/IHKBerlin_Gewerbedaten/master/data/IHKBerlin_Gewerbedaten.csv";
 
+// const dataLink = `https://media.githubusercontent.com/media/IHKBerlin/IHKBerlin_Gewerbedaten/master/archivedData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`;
+const dataLink = `https://media.githubusercontent.com/media/IHKBerlin/IHKBerlin_Gewerbedaten/master/data/IHKBerlin_Gewerbedaten.csv`;
 const lookupEmployees = {
   0: 0,
   "0 Beschäftigte": 0,
