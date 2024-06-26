@@ -40,7 +40,13 @@ Install the necessary libraries (you will need npm to be installed).
 npm install
 ```
 
-Then download the [IHK data](https://github.com/IHKBerlin/IHKBerlin_Gewerbedaten/tree/master/archivedData) from the IHK repo where the files are named something like: "IHKBerlin_Gewerbedaten_07-2023". Save the file in the folder "scripts/tempData".
+Then download the [IHK data](https://ihkberlin.sharefile.eu/d-s8817fb550c154384bd5b32d91e169d31) from the IHK archive where the files are named something like: "IHKBerlin_Gewerbedaten_07-2023". Save the file in the folder "scripts/tempData". You may need to create the folder first.
+
+Then go into the folder _scripts_.
+
+```code
+cd scripts
+```
 
 To import the data run the following command. You will need to adjust the 2 arguments (month and year) according to your date.
 
@@ -48,7 +54,7 @@ To import the data run the following command. You will need to adjust the 2 argu
 node addMonthlyData.js 07 2023
 ```
 
-Make sure to import the data chronologically.
+Important: Make sure to import the data chronologically!
 
 ## Auto-Update
 

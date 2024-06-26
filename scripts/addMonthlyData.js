@@ -41,13 +41,16 @@ const clMonth = process?.argv[2];
 const clYear = process?.argv[3];
 let isLocal = clMonth && clYear ? true : false;
 
+console.log("isLocal", isLocal, clMonth, clYear);
+
 if (isLocal) {
   // change date here
   month = clMonth; // 07
   year = clYear; // 2023
 }
+const dataLink =
+  "https://media.githubusercontent.com/media/IHKBerlin/IHKBerlin_Gewerbedaten/master/data/IHKBerlin_Gewerbedaten.csv";
 
-const dataLink = `https://media.githubusercontent.com/media/IHKBerlin/IHKBerlin_Gewerbedaten/master/archivedData/IHKBerlin_Gewerbedaten_${month}-${year}.csv`;
 const lookupEmployees = {
   0: 0,
   "0 Beschäftigte": 0,
