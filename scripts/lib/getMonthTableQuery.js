@@ -85,6 +85,16 @@ export function getMonthTableQuery(tableName, fullDate) {
     INNER JOIN location_by_date AS l ON b.opendata_id = l.opendata_id
     INNER JOIN employees_by_date AS e ON b.opendata_id = e.opendata_id
     LEFT JOIN branch_by_date AS brd ON b.opendata_id = brd.opendata_id
-    LEFT JOIN branch_names AS brn ON brn.ihk_branch_id = brd.ihk_branch_id`;
+    LEFT JOIN branch_names AS brn ON brn.ihk_branch_id = brd.ihk_branch_id
+    
+    alter table "public".${tableName} enable row level security;
+
+    create policy "Enable read access for all users"
+    on "public".${tableName}
+    as permissive
+    for select
+    to public
+    using (true);
+    `;
   return query;
 }
