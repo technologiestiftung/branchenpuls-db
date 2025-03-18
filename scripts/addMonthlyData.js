@@ -32,10 +32,11 @@ const limit = pLimit(50); // Limit to processing 50 rows concurrently
 
 let db;
 let wasError = false;
-const date = new Date();
-let year = date.getFullYear();
-let month = date.getMonth() + 1;
-month = month.toString().length === 1 ? `0${month}` : `${month}`;
+
+let now = new Date();
+now.setMonth(now.getMonth() - 1); // Go to last month
+let year = now.getFullYear();
+let month = (now.getMonth() + 1).toString().padStart(2, "0"); // Ensure two digits
 
 const clMonth = process?.argv[2];
 const clYear = process?.argv[3];
